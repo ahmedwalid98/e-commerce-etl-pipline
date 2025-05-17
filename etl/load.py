@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
-from .extract_and_transform import (
+from extract_and_transform import (
     extract_customer_data,
     extract_product_data,
     extract_order_data,
@@ -10,6 +10,8 @@ from .extract_and_transform import (
     dim_date,
     extract_fact_sales,
 )
+import logging
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 dwh_engine = create_engine(
     "postgresql://postgres:password@127.0.0.1:5432/e_commerce_dwh")
@@ -24,7 +26,7 @@ def load_to_dwh(df: pd.DataFrame, table_name: str):
     with dwh_engine.connect() as conn:
         df.to_sql(table_name, con=conn, if_exists='append',
                   index=False, method=skip_conflict_rows)
-        print(f"✅ {table_name} loaded successfully.")
+        logging.info(f"✅ {table_name} loaded successfully.")
 
 def load_dim_tables():
     dim_datasets = {

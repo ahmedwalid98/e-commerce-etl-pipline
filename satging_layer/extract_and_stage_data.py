@@ -1,5 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
+import logging
+logging.basicConfig('%(levelname)s: %(message)s', format=logging.INFO)
 
 engine = create_engine(
     "postgresql+psycopg2://postgres:password@localhost:5432/e_commerce_db")
@@ -70,9 +72,9 @@ def stage_data_into_postgres():
         for table, df in datasets.items():
             df.to_sql(name=table, con=engine,
                       if_exists='append', index=False, method='multi')
-            print(f'{len(df)} rows inserted into {table} table')
+            logging.info(f'{len(df)} rows inserted into {table} table')
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}")
 
 
 if __name__ == '__main__':
